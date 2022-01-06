@@ -2,7 +2,10 @@
  * WordPress dependencies
  */
 import { getBlockSupport } from '@wordpress/blocks';
-import { __experimentalToolsPanelItem as ToolsPanelItem } from '@wordpress/components';
+import {
+	__experimentalToolsPanelItem as ToolsPanelItem,
+	__experimentalBorderBoxControl as BorderBoxControl,
+} from '@wordpress/components';
 import { Platform } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
@@ -10,35 +13,96 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import {
-	BorderColorEdit,
-	hasBorderColorValue,
-	resetBorderColor,
-} from './border-color';
-import {
 	BorderRadiusEdit,
 	hasBorderRadiusValue,
 	resetBorderRadius,
 } from './border-radius';
-import {
-	BorderStyleEdit,
-	hasBorderStyleValue,
-	resetBorderStyle,
-} from './border-style';
-import {
-	BorderWidthEdit,
-	hasBorderWidthValue,
-	resetBorderWidth,
-} from './border-width';
 import InspectorControls from '../components/inspector-controls';
+import useMultipleOriginColorsAndGradients from '../components/colors-gradients/use-multiple-origin-colors-and-gradients';
 import useSetting from '../components/use-setting';
 import { cleanEmptyObject } from './utils';
 
 export const BORDER_SUPPORT_KEY = '__experimentalBorder';
 
+const sides = [ 'top', 'right', 'bottom', 'left' ];
+const borderProps = [ 'color', 'style', 'width' ];
+
+const isEmptyBorder = ( border ) => {
+	if ( ! border ) {
+		return true;
+	}
+
+	// If the current object has any border props set, consider the border
+	// not empty. This allows border radius to still be on the border style
+	// object.
+	return ! borderProps.some( ( side ) => border[ side ] !== undefined );
+};
+
+const hasSplitBorders = ( border = {} ) => {
+	return Object.keys( border ).some(
+		( side ) => sides.indexOf( side ) !== -1
+	);
+};
+
+const hasBorderValue = ( props ) => {
+	const border = props.attributes.style?.border;
+
+	// No border, no worries :)
+	if ( ! border ) {
+		return false;
+	}
+
+	// If we have individual borders per side within the border object we
+	// need to check whether any of those side borders have been set.
+	if ( hasSplitBorders( border ) ) {
+		const allSidesEmpty = Object.keys( border ).every( ( side ) =>
+			isEmptyBorder( border[ side ] )
+		);
+
+		return ! allSidesEmpty;
+	}
+
+	// If we have a top-level border only, check if that is empty. e.g.
+	// { color: undefined, style: undefined, width: undefined }
+	// Border radius can still be set within the border object as it is
+	// handled separately.
+	return ! isEmptyBorder( border );
+};
+
+// The border color, style, and width are omitted so the get undefined. The
+// border radius is separate and must retain its selection.
+const resetBorder = ( { attributes = {}, setAttributes } ) => {
+	const { style } = attributes;
+	setAttributes( {
+		style: {
+			...style,
+			border: cleanEmptyObject( {
+				radius: style?.border?.radius,
+			} ),
+		},
+	} );
+};
+
+// TODO: Revisit this and check if it actually works as expected.
+const resetBorderFilter = ( newAttributes ) => ( {
+	...newAttributes,
+	style: {
+		...newAttributes.style,
+		border: {
+			radius: newAttributes.style?.border?.radius,
+		},
+	},
+} );
+
 export function BorderPanel( props ) {
-	const { clientId } = props;
+	const {
+		attributes: { style },
+		clientId,
+		setAttributes,
+	} = props;
 	const isDisabled = useIsBorderDisabled( props );
 	const isSupported = hasBorderSupport( props.name );
+	const { colors } = useMultipleOriginColorsAndGradients();
 
 	const isColorSupported =
 		useSetting( 'border.color' ) && hasBorderSupport( props.name, 'color' );
@@ -62,61 +126,42 @@ export function BorderPanel( props ) {
 		'__experimentalDefaultControls',
 	] );
 
-	const createResetAllFilter = (
-		borderAttribute,
-		topLevelAttributes = {}
-	) => ( newAttributes ) => ( {
-		...newAttributes,
-		...topLevelAttributes,
-		style: {
-			...newAttributes.style,
+	const showBorderByDefault =
+		defaultBorderControls?.color || defaultBorderControls?.width;
+
+	const onBorderChange = ( newBorder ) => {
+		const newStyle = {
+			...style,
 			border: {
-				...newAttributes.style?.border,
-				[ borderAttribute ]: undefined,
+				...style?.border,
+				...newBorder,
 			},
-		},
-	} );
+		};
+
+		setAttributes( { style: newStyle } );
+	};
 
 	return (
 		<InspectorControls __experimentalGroup="border">
-			{ isWidthSupported && (
+			{ ( isWidthSupported || isColorSupported ) && (
 				<ToolsPanelItem
-					className="single-column"
-					hasValue={ () => hasBorderWidthValue( props ) }
-					label={ __( 'Width' ) }
-					onDeselect={ () => resetBorderWidth( props ) }
-					isShownByDefault={ defaultBorderControls?.width }
-					resetAllFilter={ createResetAllFilter( 'width' ) }
+					hasValue={ () => hasBorderValue( props ) }
+					label={ __( 'Border' ) }
+					onDeselect={ () => resetBorder( props ) }
+					isShownByDefault={ showBorderByDefault }
+					resetAllFilter={ resetBorderFilter }
 					panelId={ clientId }
 				>
-					<BorderWidthEdit { ...props } />
-				</ToolsPanelItem>
-			) }
-			{ isStyleSupported && (
-				<ToolsPanelItem
-					className="single-column"
-					hasValue={ () => hasBorderStyleValue( props ) }
-					label={ __( 'Style' ) }
-					onDeselect={ () => resetBorderStyle( props ) }
-					isShownByDefault={ defaultBorderControls?.style }
-					resetAllFilter={ createResetAllFilter( 'style' ) }
-					panelId={ clientId }
-				>
-					<BorderStyleEdit { ...props } />
-				</ToolsPanelItem>
-			) }
-			{ isColorSupported && (
-				<ToolsPanelItem
-					hasValue={ () => hasBorderColorValue( props ) }
-					label={ __( 'Color' ) }
-					onDeselect={ () => resetBorderColor( props ) }
-					isShownByDefault={ defaultBorderControls?.color }
-					resetAllFilter={ createResetAllFilter( 'color', {
-						borderColor: undefined,
-					} ) }
-					panelId={ clientId }
-				>
-					<BorderColorEdit { ...props } />
+					<BorderBoxControl
+						colors={ colors }
+						onChange={ onBorderChange }
+						showColor={ isColorSupported }
+						showStyle={ isStyleSupported }
+						showWidth={ isWidthSupported }
+						value={ style?.border }
+						__experimentalHasMultipleOrigins={ true }
+						__experimentalIsRenderedInSidebar={ true }
+					/>
 				</ToolsPanelItem>
 			) }
 			{ isRadiusSupported && (
@@ -125,7 +170,16 @@ export function BorderPanel( props ) {
 					label={ __( 'Radius' ) }
 					onDeselect={ () => resetBorderRadius( props ) }
 					isShownByDefault={ defaultBorderControls?.radius }
-					resetAllFilter={ createResetAllFilter( 'radius' ) }
+					resetAllFilter={ ( newAttributes ) => ( {
+						...newAttributes,
+						style: {
+							...newAttributes.style,
+							border: {
+								...newAttributes.style?.border,
+								radius: undefined,
+							},
+						},
+					} ) }
 					panelId={ clientId }
 				>
 					<BorderRadiusEdit { ...props } />
