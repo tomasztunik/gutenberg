@@ -72,7 +72,11 @@ export * from '@testing-library/react-native';
 // Custom implementation of the waitFor utility to prevent the issue: https://git.io/JYYGE
 export function waitFor(
 	cb,
-	{ timeout, interval } = { timeout: 1000, interval: 50 }
+	{ timeout, interval, useSetImmediate } = {
+		timeout: 1000,
+		interval: 50,
+		useSetImmediate: false,
+	}
 ) {
 	let result;
 	const check = ( resolve, reject, time = 0 ) => {
@@ -92,7 +96,17 @@ export function waitFor(
 	};
 	return new Promise( ( resolve, reject ) =>
 		act(
-			() => new Promise( ( internalResolve ) => check( internalResolve ) )
+			() =>
+				new Promise( ( internalResolve ) => {
+					if ( useSetImmediate ) {
+						// Wait to the end of the current Javascript execution block to run the query.
+						// This helps addressing the issue of getting the "act" warnings due to unexpected state updates.
+						// I.e. "Warning: An update to EditorProvider inside a test was not wrapped in act(...)."
+						setImmediate( () => check( internalResolve ) );
+					} else {
+						check( internalResolve );
+					}
+				} )
 		).then( () => {
 			if ( ! result ) {
 				reject(
