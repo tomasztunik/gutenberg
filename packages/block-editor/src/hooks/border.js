@@ -5,6 +5,8 @@ import { getBlockSupport } from '@wordpress/blocks';
 import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalBorderBoxControl as BorderBoxControl,
+	isEmptyBorder,
+	hasSplitBorders,
 } from '@wordpress/components';
 import { Platform } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -23,26 +25,6 @@ import useSetting from '../components/use-setting';
 import { cleanEmptyObject } from './utils';
 
 export const BORDER_SUPPORT_KEY = '__experimentalBorder';
-
-const sides = [ 'top', 'right', 'bottom', 'left' ];
-const borderProps = [ 'color', 'style', 'width' ];
-
-const isEmptyBorder = ( border ) => {
-	if ( ! border ) {
-		return true;
-	}
-
-	// If the current object has any border props set, consider the border
-	// not empty. This allows border radius to still be on the border style
-	// object.
-	return ! borderProps.some( ( side ) => border[ side ] !== undefined );
-};
-
-const hasSplitBorders = ( border = {} ) => {
-	return Object.keys( border ).some(
-		( side ) => sides.indexOf( side ) !== -1
-	);
-};
 
 const hasBorderValue = ( props ) => {
 	const border = props.attributes.style?.border;
