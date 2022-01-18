@@ -23,7 +23,11 @@ export {
 	useAutocompleteProps as __unstableUseAutocompleteProps,
 } from './autocomplete';
 export { default as BaseControl } from './base-control';
-export { BorderBoxControl as __experimentalBorderBoxControl } from './border-box-control';
+export {
+	BorderBoxControl as __experimentalBorderBoxControl,
+	isEmptyBorder,
+	hasSplitBorders,
+} from './border-box-control';
 export { BorderControl as __experimentalBorderControl } from './border-control';
 export { default as __experimentalBoxControl } from './box-control';
 export { default as Button } from './button';
