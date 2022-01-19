@@ -40,6 +40,7 @@ const BorderControl = (
 		onWidthChange,
 		onSliderChange,
 		placeholder,
+		showStyle = true,
 		sliderClassName,
 		value: border,
 		width,
@@ -64,6 +65,7 @@ const BorderControl = (
 						border={ border }
 						colors={ colors }
 						onChange={ onBorderChange }
+						showStyle={ showStyle }
 						__experimentalHasMultipleOrigins={
 							__experimentalHasMultipleOrigins
 						}

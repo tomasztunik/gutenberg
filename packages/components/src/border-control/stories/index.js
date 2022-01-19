@@ -45,9 +45,10 @@ export const _default = () => {
 	const [ border, setBorder ] = useState();
 
 	const props = {
-		withSlider: boolean( 'withSlider', true ),
 		isSmall: boolean( 'isSmall', true ),
+		showStyle: boolean( 'showStyle', true ),
 		width: text( 'width', '110px' ),
+		withSlider: boolean( 'withSlider', true ),
 	};
 
 	const onChange = ( newBorder ) => setBorder( newBorder );

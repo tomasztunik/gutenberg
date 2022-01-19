@@ -16,6 +16,7 @@ export type BorderControlProps = {
 	label?: string;
 	onChange: ( value: Border | undefined ) => void;
 	shouldSanitizeBorder?: boolean;
+	showStyle?: boolean;
 	value?: Border;
 	width?: string;
 	withSlider?: boolean;

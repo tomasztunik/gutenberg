@@ -49,6 +49,10 @@ const getButton = ( name ) => {
 	return screen.getByRole( 'button', { name } );
 };
 
+const queryButton = ( name ) => {
+	return screen.queryByRole( 'button', { name } );
+};
+
 const clickButton = ( name ) => {
 	fireEvent.click( getButton( name ) );
 };
@@ -129,6 +133,21 @@ describe( 'BorderControl', () => {
 			expect( dashedButton ).toBeInTheDocument();
 			expect( dottedButton ).toBeInTheDocument();
 			expect( resetButton ).toBeInTheDocument();
+		} );
+
+		it( 'should not render style options when opted out of', () => {
+			renderBorderControl( { showStyle: false } );
+			openPopover();
+
+			const styleLabel = screen.queryByText( 'Style' );
+			const solidButton = queryButton( 'Solid' );
+			const dashedButton = queryButton( 'Dashed' );
+			const dottedButton = queryButton( 'Dotted' );
+
+			expect( styleLabel ).not.toBeInTheDocument();
+			expect( solidButton ).not.toBeInTheDocument();
+			expect( dashedButton ).not.toBeInTheDocument();
+			expect( dottedButton ).not.toBeInTheDocument();
 		} );
 	} );
 
