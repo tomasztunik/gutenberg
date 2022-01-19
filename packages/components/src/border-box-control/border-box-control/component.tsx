@@ -47,6 +47,7 @@ const BorderBoxControl = (
 		linkedValue,
 		onLinkedChange,
 		onSplitChange,
+		showStyle,
 		splitValue,
 		toggleLinked,
 		__experimentalHasMultipleOrigins,
@@ -70,6 +71,7 @@ const BorderBoxControl = (
 							hasMixedBorders ? __( 'Mixed' ) : undefined
 						}
 						shouldSanitizeBorder={ false } // This component will handle that.
+						showStyle={ showStyle }
 						value={ linkedValue }
 						withSlider={ true }
 						width={ '110px' }
@@ -84,6 +86,7 @@ const BorderBoxControl = (
 					<SplitBorderControl
 						colors={ colors }
 						onChange={ onSplitChange }
+						showStyle={ showStyle }
 						value={ splitValue }
 						__experimentalHasMultipleOrigins={
 							__experimentalHasMultipleOrigins

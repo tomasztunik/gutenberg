@@ -22,6 +22,7 @@ const SplitBorderControl = (
 		centeredClassName,
 		colors,
 		onChange,
+		showStyle,
 		value,
 		__experimentalHasMultipleOrigins,
 		__experimentalIsRenderedInSidebar,
@@ -31,6 +32,7 @@ const SplitBorderControl = (
 	const sharedBorderControlProps = {
 		colors,
 		isSmall: true,
+		showStyle,
 		__experimentalHasMultipleOrigins,
 		__experimentalIsRenderedInSidebar,
 	};

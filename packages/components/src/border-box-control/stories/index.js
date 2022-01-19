@@ -2,6 +2,7 @@
  * External dependencies
  */
 import styled from '@emotion/styled';
+import { boolean } from '@storybook/addon-knobs';
 
 /**
  * WordPress dependencies
@@ -36,6 +37,9 @@ const colors = [
 export default {
 	title: 'Components (Experimental)/BorderBoxControl',
 	component: BorderBoxControl,
+	parameters: {
+		knobs: { disable: false },
+	},
 };
 
 export const _default = () => {
@@ -51,6 +55,10 @@ export const _default = () => {
 		left: defaultBorder,
 	} );
 
+	const props = {
+		showStyle: boolean( 'showStyle', true ),
+	};
+
 	return (
 		<>
 			<WrapperView>
@@ -59,6 +67,7 @@ export const _default = () => {
 					label="Borders"
 					onChange={ ( newBorders ) => setBorders( newBorders ) }
 					value={ borders }
+					{ ...props }
 				/>
 			</WrapperView>
 			<Separator />

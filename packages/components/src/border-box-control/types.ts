@@ -23,6 +23,7 @@ export type BorderBoxControlProps = {
 	hideLabelFromVision?: boolean;
 	label?: string;
 	onChange: ( value: AnyBorder ) => void;
+	showStyle?: boolean;
 	value: AnyBorder;
 	__experimentalHasMultipleOrigins?: boolean;
 	__experimentalIsRenderedInSidebar?: boolean;
@@ -40,6 +41,7 @@ export type BorderVisualizerProps = {
 export type SplitBorderControlProps = {
 	colors?: Color[];
 	onChange: ( value: Border | undefined, side: BorderSide ) => void;
+	showStyle?: boolean;
 	value?: Borders;
 	__experimentalHasMultipleOrigins?: boolean;
 	__experimentalIsRenderedInSidebar?: boolean;

@@ -53,6 +53,10 @@ const clickButton = ( name ) => {
 	fireEvent.click( screen.getByRole( 'button', { name } ) );
 };
 
+const queryButton = ( name ) => {
+	return screen.queryByRole( 'button', { name } );
+};
+
 const updateLinkedWidthInput = ( value ) => {
 	const widthInput = screen.getByRole( 'spinbutton' );
 	widthInput.focus();
@@ -140,6 +144,23 @@ describe( 'BorderBoxControl', () => {
 
 			expect( linkedInput.value ).toBe( '5' );
 		} );
+
+		it( 'should omit style options when requested', () => {
+			renderBorderBoxControl( { showStyle: false } );
+
+			const colorButton = screen.getByLabelText( 'Open border options' );
+			fireEvent.click( colorButton );
+
+			const styleLabel = screen.queryByText( 'Style' );
+			const solidButton = queryButton( 'Solid' );
+			const dashedButton = queryButton( 'Dashed' );
+			const dottedButton = queryButton( 'Dotted' );
+
+			expect( styleLabel ).not.toBeInTheDocument();
+			expect( solidButton ).not.toBeInTheDocument();
+			expect( dashedButton ).not.toBeInTheDocument();
+			expect( dottedButton ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'Split view rendering', () => {
@@ -181,6 +202,31 @@ describe( 'BorderBoxControl', () => {
 			expect( widthInputs[ 1 ].value ).toBe( '1' ); // Left.
 			expect( widthInputs[ 2 ].value ).toBe( '1' ); // Right.
 			expect( widthInputs[ 3 ].value ).toBe( '1' ); // Bottom.
+		} );
+
+		it( 'should omit style options when requested', () => {
+			renderBorderBoxControl( { showStyle: false } );
+			clickButton( 'Unlink sides' );
+
+			const colorButtons = screen.getAllByLabelText(
+				'Open border options'
+			);
+
+			colorButtons.forEach( ( button ) => {
+				fireEvent.click( button );
+
+				const styleLabel = screen.queryByText( 'Style' );
+				const solidButton = queryButton( 'Solid' );
+				const dashedButton = queryButton( 'Dashed' );
+				const dottedButton = queryButton( 'Dotted' );
+
+				expect( styleLabel ).not.toBeInTheDocument();
+				expect( solidButton ).not.toBeInTheDocument();
+				expect( dashedButton ).not.toBeInTheDocument();
+				expect( dottedButton ).not.toBeInTheDocument();
+
+				fireEvent.click( button );
+			} );
 		} );
 	} );
 
