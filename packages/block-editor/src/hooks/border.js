@@ -112,11 +112,20 @@ export function BorderPanel( props ) {
 		defaultBorderControls?.color || defaultBorderControls?.width;
 
 	const onBorderChange = ( newBorder ) => {
+		// Handle case where all non-radius properties are cleared and the
+		// new border is then undefined.
+		const newBorderStyles = !! newBorder
+			? newBorder
+			: {
+					color: undefined,
+					style: undefined,
+			  };
+
 		const newStyle = {
 			...style,
 			border: {
 				...style?.border,
-				...newBorder,
+				...newBorderStyles,
 			},
 		};
 
