@@ -5,8 +5,7 @@ import { getBlockSupport } from '@wordpress/blocks';
 import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalBorderBoxControl as BorderBoxControl,
-	isEmptyBorder,
-	hasSplitBorders,
+	isDefinedBorder,
 } from '@wordpress/components';
 import { Platform } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -27,28 +26,7 @@ import { cleanEmptyObject } from './utils';
 export const BORDER_SUPPORT_KEY = '__experimentalBorder';
 
 const hasBorderValue = ( props ) => {
-	const border = props.attributes.style?.border;
-
-	// No border, no worries :)
-	if ( ! border ) {
-		return false;
-	}
-
-	// If we have individual borders per side within the border object we
-	// need to check whether any of those side borders have been set.
-	if ( hasSplitBorders( border ) ) {
-		const allSidesEmpty = Object.keys( border ).every( ( side ) =>
-			isEmptyBorder( border[ side ] )
-		);
-
-		return ! allSidesEmpty;
-	}
-
-	// If we have a top-level border only, check if that is empty. e.g.
-	// { color: undefined, style: undefined, width: undefined }
-	// Border radius can still be set within the border object as it is
-	// handled separately.
-	return ! isEmptyBorder( border );
+	return isDefinedBorder( props.attributes.style?.border );
 };
 
 // The border color, style, and width are omitted so the get undefined. The
