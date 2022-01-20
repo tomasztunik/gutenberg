@@ -1,3 +1,3 @@
 export { default as BorderBoxControl } from './border-box-control/component';
 export { useBorderBoxControl } from './border-box-control/hook';
-export { isEmptyBorder, hasSplitBorders } from './utils';
+export { isEmptyBorder, isDefinedBorder } from './utils';

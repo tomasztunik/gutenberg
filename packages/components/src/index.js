@@ -26,7 +26,7 @@ export { default as BaseControl } from './base-control';
 export {
 	BorderBoxControl as __experimentalBorderBoxControl,
 	isEmptyBorder,
-	hasSplitBorders,
+	isDefinedBorder,
 } from './border-box-control';
 export { BorderControl as __experimentalBorderControl } from './border-control';
 export { default as __experimentalBoxControl } from './box-control';

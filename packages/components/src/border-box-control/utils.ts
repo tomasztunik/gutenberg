@@ -14,6 +14,29 @@ export const isEmptyBorder = ( border: Border | undefined ) => {
 	return ! borderProps.some( ( prop ) => border[ prop ] !== undefined );
 };
 
+export const isDefinedBorder = ( border: AnyBorder ) => {
+	// No border, no worries :)
+	if ( ! border ) {
+		return false;
+	}
+
+	// If we have individual borders per side within the border object we
+	// need to check whether any of those side borders have been set.
+	if ( hasSplitBorders( border ) ) {
+		const allSidesEmpty = sides.every( ( side ) =>
+			isEmptyBorder( ( border as Borders )[ side ] )
+		);
+
+		return ! allSidesEmpty;
+	}
+
+	// If we have a top-level border only, check if that is empty. e.g.
+	// { color: undefined, style: undefined, width: undefined }
+	// Border radius can still be set within the border object as it is
+	// handled separately.
+	return ! isEmptyBorder( border as Border );
+};
+
 export const isCompleteBorder = ( border: Border | undefined ) => {
 	if ( ! border ) {
 		return false;

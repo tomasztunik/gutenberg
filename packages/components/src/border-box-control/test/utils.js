@@ -10,6 +10,7 @@ import {
 	hasMixedBorders,
 	hasSplitBorders,
 	isCompleteBorder,
+	isDefinedBorder,
 	isEmptyBorder,
 } from '../utils';
 
@@ -61,6 +62,49 @@ describe( 'BorderBoxControl Utils', () => {
 
 		it( 'should determine object with at least one border property as non-empty', () => {
 			expect( isEmptyBorder( partialWithExtraProp ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isDefinedBorder', () => {
+		it( 'should determine undefined is not a defined border', () => {
+			expect( isDefinedBorder( undefined ) ).toBe( false );
+		} );
+
+		it( 'should determine an empty object to be an undefined border', () => {
+			expect( isDefinedBorder( {} ) ).toBe( false );
+		} );
+
+		it( 'should determine an border object with undefined properties to be an undefined border', () => {
+			const emptyBorder = {
+				color: undefined,
+				style: undefined,
+				width: undefined,
+			};
+			expect( isDefinedBorder( emptyBorder ) ).toBe( false );
+		} );
+
+		it( 'should class an object with at least one side border as defined', () => {
+			expect( isDefinedBorder( mixedBordersWithUndefined ) ).toBe( true );
+		} );
+
+		it( 'should determine complete split borders object is defined border', () => {
+			expect( isDefinedBorder( splitBorders ) ).toBe( true );
+		} );
+
+		it( 'should determine border is not defined when all sides are empty', () => {
+			const mixedUndefinedBorders = {
+				top: undefined,
+				right: undefined,
+				bottom: {},
+				left: {
+					color: undefined,
+					style: undefined,
+					width: undefined,
+				},
+			};
+
+			expect( isDefinedBorder( undefinedSplitBorders ) ).toBe( false );
+			expect( isDefinedBorder( mixedUndefinedBorders ) ).toBe( false );
 		} );
 	} );
 
