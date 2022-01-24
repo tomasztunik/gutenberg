@@ -39,6 +39,8 @@ const BorderBoxControl = (
 	const {
 		className,
 		colors,
+		disableCustomColors,
+		enableAlpha,
 		hasMixedBorders,
 		hideLabelFromVision,
 		isLinked,
@@ -66,6 +68,8 @@ const BorderBoxControl = (
 					<BorderControl
 						className={ linkedControlClassName }
 						colors={ colors }
+						disableCustomColors={ disableCustomColors }
+						enableAlpha={ enableAlpha }
 						onChange={ onLinkedChange }
 						placeholder={
 							hasMixedBorders ? __( 'Mixed' ) : undefined
@@ -85,6 +89,8 @@ const BorderBoxControl = (
 				) : (
 					<SplitBorderControl
 						colors={ colors }
+						disableCustomColors={ disableCustomColors }
+						enableAlpha={ enableAlpha }
 						onChange={ onSplitChange }
 						showStyle={ showStyle }
 						value={ splitValue }

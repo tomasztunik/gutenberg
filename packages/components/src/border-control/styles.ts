@@ -75,10 +75,6 @@ export const BorderDropdown = css`
 	}
 `;
 
-export const BorderColorIndicator = css`
-	/* TODO */
-`;
-
 export const BorderPopover = css`
 	/* Remove padding from content, this will be re-added via inner elements*/
 	&& > div > div {
@@ -99,6 +95,9 @@ export const BorderPopoverControls = css`
 		padding: 0;
 	}
 `;
+
+export const BorderPopoverContent = css``;
+export const BorderColorIndicator = css``;
 
 export const ResetButton = css`
 	justify-content: center;

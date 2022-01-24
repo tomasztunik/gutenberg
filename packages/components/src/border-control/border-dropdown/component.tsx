@@ -37,6 +37,7 @@ const BorderDropdown = (
 		indicatorClassName,
 		onChange,
 		popoverClassName,
+		popoverContentClassName,
 		popoverControlsClassName,
 		resetButtonClassName,
 		showStyle = true,
@@ -84,7 +85,7 @@ const BorderDropdown = (
 					/>
 				</HStack>
 				<ColorPalette
-					className="test"
+					className={ popoverContentClassName }
 					value={ border?.color }
 					onChange={ onColorChange }
 					{ ...{ colors, disableCustomColors } }

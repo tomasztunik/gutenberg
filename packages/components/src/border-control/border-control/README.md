@@ -54,6 +54,19 @@ Each color may be an object containing a `name` and `color` value.
 
 - Required: No
 
+### `disableCustomColors`: `boolean`
+
+This toggles the ability to choose custom colors.
+
+- Required: No
+
+### `enableAlpha`: `boolean`
+
+This controls whether the alpha channel will be offered when selecting
+custom colors.
+
+- Required: No
+
 ### `hideLabelFromVision`: `boolean`
 
 Provides control over whether the label will only be visible to screen readers.
@@ -70,7 +83,7 @@ additional space.
 
 ### `label`: `string`
 
-If provided, a label will be generated using this `string` as the content.
+If provided, a label will be generated using this as the content.
 
 _Whether it is visible only to screen readers is controlled via
 `hideLabelFromVision`._
@@ -104,7 +117,8 @@ This controls whether to include border style options within the
 
 ### `value`: `Object`
 
-An object representing a border or `undefined`.
+An object representing a border or `undefined`. Used to set the current border
+configuration for this component.
 
 Example:
 ```js

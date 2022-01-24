@@ -38,6 +38,10 @@ export function useBorderDropdown(
 		return cx( styles.BorderPopoverControls );
 	}, [] );
 
+	const popoverContentClassName = useMemo( () => {
+		return cx( styles.BorderPopoverContent );
+	}, [] );
+
 	const resetButtonClassName = useMemo( () => {
 		return cx( styles.ResetButton );
 	}, [] );
@@ -48,6 +52,7 @@ export function useBorderDropdown(
 		colors,
 		indicatorClassName,
 		popoverClassName,
+		popoverContentClassName,
 		popoverControlsClassName,
 		resetButtonClassName,
 	};

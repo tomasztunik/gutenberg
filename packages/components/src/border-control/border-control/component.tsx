@@ -33,20 +33,22 @@ const BorderControl = (
 ) => {
 	const {
 		colors,
+		disableCustomColors,
+		enableAlpha,
 		hideLabelFromVision,
 		innerWrapperClassName,
 		label,
 		onBorderChange,
-		onWidthChange,
 		onSliderChange,
+		onWidthChange,
 		placeholder,
 		showStyle = true,
 		sliderClassName,
 		value: border,
 		width,
 		widthControlClassName,
-		widthValue,
 		widthUnit,
+		widthValue,
 		withSlider,
 		__experimentalHasMultipleOrigins,
 		__experimentalIsRenderedInSidebar,
@@ -64,6 +66,8 @@ const BorderControl = (
 					<BorderDropdown
 						border={ border }
 						colors={ colors }
+						disableCustomColors={ disableCustomColors }
+						enableAlpha={ enableAlpha }
 						onChange={ onBorderChange }
 						showStyle={ showStyle }
 						__experimentalHasMultipleOrigins={

@@ -28,6 +28,19 @@ Each color may be an object containing a `name` and `color` value.
 
 - Required: No
 
+### `disableCustomColors`: `boolean`
+
+This toggles the ability to choose custom colors.
+
+- Required: No
+
+### `enableAlpha`: `boolean`
+
+This controls whether the alpha channel will be offered when selecting
+custom colors.
+
+- Required: No
+
 ### `onChange`: `onChange: ( value: Object | undefined, side: string ) => void;`
 
 A callback that is invoked whenever an individual side's border has changed.

@@ -71,6 +71,19 @@ Each color may be an object containing a `name` and `color` value.
 
 - Required: No
 
+### `disableCustomColors`: `boolean`
+
+This toggles the ability to choose custom colors.
+
+- Required: No
+
+### `enableAlpha`: `boolean`
+
+This controls whether the alpha channel will be offered when selecting
+custom colors.
+
+- Required: No
+
 ### `hideLabelFromVision`: `boolean`
 
 Provides control over whether the label will only be visible to screen readers.
@@ -79,7 +92,7 @@ Provides control over whether the label will only be visible to screen readers.
 
 ### `label`: `string`
 
-If provided, a label will be generated using this `string` as the content.
+If provided, a label will be generated using this as the content.
 
 _Whether it is visible only to screen readers is controlled via
 `hideLabelFromVision`._

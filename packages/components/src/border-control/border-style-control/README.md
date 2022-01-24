@@ -25,7 +25,7 @@ Provides control over whether the label will only be visible to screen readers.
 
 ### `label`: `string`
 
-If provided, a label will be generated using this `string` as the content.
+If provided, a label will be generated using this as the content.
 
 _Whether it is visible only to screen readers is controlled via
 `hideLabelFromVision`._
@@ -40,8 +40,9 @@ A callback function invoked when a border style is selected or cleared.
 
 ### `value`: `string`
 
-The currently selected border style if there is one. Available styles are:
-`solid`, `dashed` & `dotted`.
+The currently selected border style if there is one. Styles available via
+this control are `solid`, `dashed` & `dotted`, however the possibility
+to store other valid CSS values is maintained e.g. `none`, `inherit` etc.
 
 _At this time `none` is not a supported border style._
 

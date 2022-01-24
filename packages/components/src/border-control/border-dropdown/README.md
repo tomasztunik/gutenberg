@@ -62,7 +62,7 @@ This controls whether the alpha channel will be offered via the `ColorPalette`'s
 
 ### `onChange`: `( value: Object | undefined ) => void`
 
-A callback function invoked when the border color or style selections change.
+A callback invoked when the border color or style selections change.
 
 - Required: Yes
 
