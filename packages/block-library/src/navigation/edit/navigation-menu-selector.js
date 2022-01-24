@@ -14,6 +14,7 @@ import useNavigationMenu from '../use-navigation-menu';
 import useNavigationEntities from '../use-navigation-entities';
 import useConvertClassicMenu from '../use-convert-classic-menu';
 import useCreateNavigationMenu from './use-create-navigation-menu';
+import ExistingMenusSelector from './existing-menus-selector';
 
 export default function NavigationMenuSelector( {
 	clientId,
@@ -51,65 +52,91 @@ export default function NavigationMenuSelector( {
 
 	return (
 		<>
-			<MenuGroup label={ __( 'Menus' ) }>
-				<MenuItemsChoice
-					value={ ref }
-					onSelect={ ( selectedId ) =>
-						onSelect(
-							navigationMenus.find(
-								( post ) => post.id === selectedId
-							)
-						)
-					}
-					choices={ navigationMenus.map( ( { id, title } ) => {
-						const label = decodeEntities( title.rendered );
-						return {
-							value: id,
-							label,
-							'aria-label': sprintf(
-								/* translators: %s: The name of a menu. */
-								__( "Switch to '%s'" ),
-								label
-							),
-						};
+			<ExistingMenusSelector
+				showNavigationMenus={ true }
+				showClassicMenus={ true }
+				navigationMenus={ navigationMenus }
+				menus={ classicMenus }
+				onFinish={ () => {} }
+				onCreateFromMenu={ () => {} }
+			/>
+
+			<MenuGroup label={ __( 'Tools' ) }>
+				<MenuItem onClick={ onCreateNew }>
+					{ __( 'Create new menu' ) }
+				</MenuItem>
+				<MenuItem
+					href={ addQueryArgs( 'edit.php', {
+						post_type: 'wp_navigation',
 					} ) }
-				/>
+				>
+					{ __( 'Manage menus' ) }
+				</MenuItem>
 			</MenuGroup>
-			{ canUserCreateNavigation && (
-				<>
-					{ hasClassicMenus && (
-						<MenuGroup label={ __( 'Classic Menus' ) }>
-							{ classicMenus.map( ( menu ) => {
-								return (
-									<MenuItem
-										onClick={ () => {
-											convertClassicMenuToBlocks(
-												menu.id,
-												menu.name
-											);
-										} }
-										key={ menu.id }
-									>
-										{ decodeEntities( menu.name ) }
-									</MenuItem>
-								);
-							} ) }
-						</MenuGroup>
-					) }
-					<MenuGroup label={ __( 'Tools' ) }>
-						<MenuItem onClick={ onCreateNew }>
-							{ __( 'Create new menu' ) }
-						</MenuItem>
-						<MenuItem
-							href={ addQueryArgs( 'edit.php', {
-								post_type: 'wp_navigation',
-							} ) }
-						>
-							{ __( 'Manage menus' ) }
-						</MenuItem>
-					</MenuGroup>
-				</>
-			) }
 		</>
 	);
+
+	// return (
+	// 	<>
+	// 		<MenuGroup label={ __( 'Menus' ) }>
+	// 			<MenuItemsChoice
+	// 				value={ ref }
+	// 				onSelect={ ( selectedId ) =>
+	// 					onSelect(
+	// 						navigationMenus.find(
+	// 							( post ) => post.id === selectedId
+	// 						)
+	// 					)
+	// 				}
+	// 				choices={ navigationMenus.map( ( { id, title } ) => {
+	// 					const label = decodeEntities( title.rendered );
+	// 					return {
+	// 						value: id,
+	// 						label,
+	// 						'aria-label': sprintf(
+	// 							/* translators: %s: The name of a menu. */
+	// 							__( "Switch to '%s'" ),
+	// 							label
+	// 						),
+	// 					};
+	// 				} ) }
+	// 			/>
+	// 		</MenuGroup>
+	// 		{ canUserCreateNavigation && (
+	// 			<>
+	// 				{ hasClassicMenus && (
+	// 					<MenuGroup label={ __( 'Classic Menus' ) }>
+	// 						{ classicMenus.map( ( menu ) => {
+	// 							return (
+	// 								<MenuItem
+	// 									onClick={ () => {
+	// 										convertClassicMenuToBlocks(
+	// 											menu.id,
+	// 											menu.name
+	// 										);
+	// 									} }
+	// 									key={ menu.id }
+	// 								>
+	// 									{ decodeEntities( menu.name ) }
+	// 								</MenuItem>
+	// 							);
+	// 						} ) }
+	// 					</MenuGroup>
+	// 				) }
+	// 				<MenuGroup label={ __( 'Tools' ) }>
+	// 					<MenuItem onClick={ onCreateNew }>
+	// 						{ __( 'Create new menu' ) }
+	// 					</MenuItem>
+	// 					<MenuItem
+	// 						href={ addQueryArgs( 'edit.php', {
+	// 							post_type: 'wp_navigation',
+	// 						} ) }
+	// 					>
+	// 						{ __( 'Manage menus' ) }
+	// 					</MenuItem>
+	// 				</MenuGroup>
+	// 			</>
+	// 		) }
+	// 	</>
+	// );
 }
