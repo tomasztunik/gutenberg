@@ -45,6 +45,8 @@ export const _default = () => {
 	const [ border, setBorder ] = useState();
 
 	const props = {
+		disableCustomColors: boolean( 'disableCustomColors', false ),
+		enableAlpha: boolean( 'enableAlpha', true ),
 		isSmall: boolean( 'isSmall', true ),
 		showStyle: boolean( 'showStyle', true ),
 		width: text( 'width', '110px' ),

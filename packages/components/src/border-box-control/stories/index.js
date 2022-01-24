@@ -56,6 +56,8 @@ export const _default = () => {
 	} );
 
 	const props = {
+		disableCustomColors: boolean( 'disableCustomColors', false ),
+		enableAlpha: boolean( 'enableAlpha', true ),
 		showStyle: boolean( 'showStyle', true ),
 	};
 
