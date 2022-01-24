@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { createBlock } from '@wordpress/blocks';
-import { Placeholder, Button } from '@wordpress/components';
+import { Placeholder, Button, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { navigation, Icon } from '@wordpress/icons';
 
@@ -89,18 +89,38 @@ export default function NavigationPlaceholder( {
 
 							{ showSelectMenus ? (
 								<>
-									<ExistingMenusSelector
-										showNavigationMenus={
-											canSwitchNavigationMenu
-										}
-										navigationMenus={ navigationMenus }
-										onFinish={ onFinish }
-										menus={ menus }
-										onCreateFromMenu={ convertClassicMenu }
-										showClassicMenus={
-											canUserCreateNavigation
-										}
-									/>
+									<DropdownMenu
+										text={ __( 'Select menu' ) }
+										icon={ null }
+										toggleProps={ {
+											variant: 'tertiary',
+											iconPosition: 'right',
+											className:
+												'wp-block-navigation-placeholder__actions__dropdown',
+										} }
+										popoverProps={ { isAlternate: true } }
+									>
+										{ () => (
+											<ExistingMenusSelector
+												showNavigationMenus={
+													canSwitchNavigationMenu
+												}
+												navigationMenus={
+													navigationMenus
+												}
+												onSelectNavigationMenu={
+													onFinish
+												}
+												classicMenus={ menus }
+												onSelectClassicMenu={
+													convertClassicMenu
+												}
+												showClassicMenus={
+													canUserCreateNavigation
+												}
+											/>
+										) }
+									</DropdownMenu>
 									<hr />
 								</>
 							) : undefined }
