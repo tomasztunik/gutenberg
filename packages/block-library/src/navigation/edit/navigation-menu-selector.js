@@ -68,6 +68,8 @@ export default function NavigationMenuSelector( {
 				onSelectClassicMenu={ ( { id, name } ) =>
 					convertClassicMenuToBlocks( id, name )
 				}
+				/* translators: %s: The name of a menu. */
+				actionLabel={ __( "Switch to '%s'" ) }
 			/>
 
 			{ canUserCreateNavigation && (

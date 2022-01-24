@@ -12,11 +12,15 @@ const ExistingMenusSelector = ( {
 	classicMenus,
 	onSelectNavigationMenu,
 	onSelectClassicMenu,
-	/* translators: %s: The name of a menu. */
-	actionLabel = __( "Switch to '%s'" ),
+	actionLabel,
 } ) => {
 	const hasNavigationMenus = !! navigationMenus?.length;
 	const hasClassicMenus = !! classicMenus?.length;
+
+	/* translators: %s: The name of a menu. */
+	const createActionLabel = __( "Create from '%s'" );
+
+	actionLabel = actionLabel || createActionLabel;
 
 	return (
 		<>
@@ -41,14 +45,19 @@ const ExistingMenusSelector = ( {
 			{ showClassicMenus && hasClassicMenus && (
 				<MenuGroup label={ __( 'Classic Menus' ) }>
 					{ classicMenus.map( ( menu ) => {
+						const label = decodeEntities( menu.name );
 						return (
 							<MenuItem
 								onClick={ () => {
 									onSelectClassicMenu( menu );
 								} }
 								key={ menu.id }
+								aria-label={ sprintf(
+									createActionLabel,
+									label
+								) }
 							>
-								{ decodeEntities( menu.name ) }
+								{ label }
 							</MenuItem>
 						);
 					} ) }
