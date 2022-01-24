@@ -112,8 +112,14 @@ export default function NavigationPlaceholder( {
 													onFinish
 												}
 												classicMenus={ menus }
-												onSelectClassicMenu={
-													convertClassicMenu
+												onSelectClassicMenu={ ( {
+													id,
+													name,
+												} ) =>
+													convertClassicMenu(
+														id,
+														name
+													)
 												}
 												showClassicMenus={
 													canUserCreateNavigation
