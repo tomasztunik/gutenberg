@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useState, useMemo } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import {
@@ -12,12 +12,12 @@ import {
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import { Spinner } from '@wordpress/components';
-import { store as coreStore } from '@wordpress/core-data';
+import { store as coreStore, useEntityProp } from '@wordpress/core-data';
 
 /**
  * Internal dependencies
  */
-import { convertToTree } from './util';
+import { useCommentQueryArgs, useCommentTree } from './hooks';
 
 const TEMPLATE = [
 	[ 'core/comment-author-avatar' ],
@@ -112,45 +112,40 @@ const CommentsList = ( {
 	</ol>
 );
 
-export default function CommentTemplateEdit( {
-	clientId,
-	context: { postId, 'comments/perPage': perPage },
-} ) {
+export default function CommentTemplateEdit( { clientId, context } ) {
 	const blockProps = useBlockProps();
 
 	const [ activeComment, setActiveComment ] = useState();
 
-	const { rawComments, blocks } = useSelect(
+	const queryArgs = useCommentQueryArgs( { context } );
+
+	const { topLevelComments, blocks } = useSelect(
 		( select ) => {
 			const { getEntityRecords } = select( coreStore );
 			const { getBlocks } = select( blockEditorStore );
 
 			return {
-				rawComments: getEntityRecords( 'root', 'comment', {
-					post: postId,
-					status: 'approve',
-					order: 'asc',
-					context: 'embed',
-				} ),
+				// Request only top-level comments. Replies are embedded.
+				topLevelComments: queryArgs
+					? getEntityRecords( 'root', 'comment', queryArgs )
+					: null,
 				blocks: getBlocks( clientId ),
 			};
 		},
-		[ postId, clientId ]
+		[ clientId, queryArgs ]
 	);
 
-	// TODO: Replicate the logic used on the server.
-	perPage = perPage || 50;
+	// Reverse the order of top comments if needed, as specified in the
+	// Discussion settings.
+	const [ commentOrder ] = useEntityProp( 'root', 'site', 'comment_order' );
+	if ( commentOrder === 'desc' ) {
+		topLevelComments?.reverse();
+	}
 
-	// We convert the flat list of comments to tree.
-	// Then, we show only a maximum of `perPage` number of comments.
-	// This is because passing `per_page` to `getEntityRecords()` does not
-	// take into account nested comments.
-	const comments = useMemo(
-		() => convertToTree( rawComments ).slice( 0, perPage ),
-		[ rawComments, perPage ]
-	);
+	// Generate a tree structure of comment IDs.
+	const { commentTree } = useCommentTree( topLevelComments );
 
-	if ( ! rawComments ) {
+	if ( ! topLevelComments ) {
 		return (
 			<p { ...blockProps }>
 				<Spinner />
@@ -158,13 +153,13 @@ export default function CommentTemplateEdit( {
 		);
 	}
 
-	if ( ! comments.length ) {
+	if ( ! commentTree.length ) {
 		return <p { ...blockProps }> { __( 'No results found.' ) }</p>;
 	}
 
 	return (
 		<CommentsList
-			comments={ comments }
+			comments={ commentTree }
 			blockProps={ blockProps }
 			blocks={ blocks }
 			activeComment={ activeComment }
