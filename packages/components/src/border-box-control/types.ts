@@ -15,10 +15,6 @@ export type BorderProp = 'color' | 'style' | 'width';
 export type BorderSide = 'top' | 'right' | 'bottom' | 'left';
 
 export type BorderBoxControlProps = {
-	/**
-	 * The child elements.
-	 */
-	children: React.ReactNode;
 	colors?: Color[];
 	hideLabelFromVision?: boolean;
 	label?: string;

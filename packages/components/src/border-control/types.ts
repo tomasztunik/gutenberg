@@ -28,11 +28,9 @@ export type BorderDropdownProps = {
 	__experimentalHasMultipleOrigins?: boolean;
 	__experimentalIsRenderedInSidebar?: boolean;
 	border?: Border;
-	className?: string;
 	colors?: Color[];
 	disableCustomColors?: boolean;
 	enableAlpha?: boolean;
-	indicatorClassName?: string;
 	onChange: ( newBorder: Border | undefined ) => void;
 	showStyle?: boolean;
 };
