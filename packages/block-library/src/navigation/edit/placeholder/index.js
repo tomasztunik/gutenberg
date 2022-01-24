@@ -15,7 +15,7 @@ import PlaceholderPreview from './placeholder-preview';
 import useNavigationMenu from '../../use-navigation-menu';
 import useCreateNavigationMenu from '../use-create-navigation-menu';
 import useConvertClassicMenu from '../../use-convert-classic-menu';
-import ExistingMenusSelector from '../existing-menus-selector';
+import ExistingMenusOptions from '../existing-menus-options';
 
 export default function NavigationPlaceholder( {
 	clientId,
@@ -101,7 +101,7 @@ export default function NavigationPlaceholder( {
 										popoverProps={ { isAlternate: true } }
 									>
 										{ () => (
-											<ExistingMenusSelector
+											<ExistingMenusOptions
 												showNavigationMenus={
 													canSwitchNavigationMenu
 												}

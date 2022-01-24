@@ -13,7 +13,7 @@ import useNavigationMenu from '../use-navigation-menu';
 import useNavigationEntities from '../use-navigation-entities';
 import useConvertClassicMenu from '../use-convert-classic-menu';
 import useCreateNavigationMenu from './use-create-navigation-menu';
-import ExistingMenusSelector from './existing-menus-selector';
+import ExistingMenusOptions from './existing-menus-options';
 
 export default function NavigationMenuSelector( {
 	clientId,
@@ -59,7 +59,7 @@ export default function NavigationMenuSelector( {
 
 	return (
 		<>
-			<ExistingMenusSelector
+			<ExistingMenusOptions
 				showNavigationMenus={ canUserSwitchNavigation }
 				showClassicMenus={ canUserCreateNavigation }
 				navigationMenus={ navigationMenus }

@@ -5,7 +5,7 @@ import { MenuGroup, MenuItem } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 
-const ExistingMenusSelector = ( {
+const ExistingMenusOptions = ( {
 	showNavigationMenus,
 	showClassicMenus = false,
 	navigationMenus,
@@ -67,4 +67,4 @@ const ExistingMenusSelector = ( {
 	);
 };
 
-export default ExistingMenusSelector;
+export default ExistingMenusOptions;
