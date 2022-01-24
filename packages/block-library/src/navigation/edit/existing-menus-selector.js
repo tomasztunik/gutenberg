@@ -1,35 +1,38 @@
 /**
  * WordPress dependencies
  */
-import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { MenuGroup, MenuItem } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 
 const ExistingMenusSelector = ( {
 	showNavigationMenus,
-	navigationMenus,
-	onFinish,
-	menus,
-	onCreateFromMenu,
 	showClassicMenus = false,
+	navigationMenus,
+	classicMenus,
+	onSelectNavigationMenu,
+	onSelectClassicMenu,
+	/* translators: %s: The name of a menu. */
+	actionLabel = __( "Switch to '%s'" ),
 } ) => {
 	const hasNavigationMenus = !! navigationMenus?.length;
-	const hasClassicMenus = !! menus?.length;
+	const hasClassicMenus = !! classicMenus?.length;
 
 	return (
 		<>
 			{ showNavigationMenus && hasNavigationMenus && (
 				<MenuGroup label={ __( 'Menus' ) }>
 					{ navigationMenus.map( ( menu ) => {
+						const label = decodeEntities( menu.title.rendered );
 						return (
 							<MenuItem
 								onClick={ () => {
-									onFinish( menu );
+									onSelectNavigationMenu( menu );
 								} }
-								// onClose={ onClose }
 								key={ menu.id }
+								aria-label={ sprintf( actionLabel, label ) }
 							>
-								{ decodeEntities( menu.title.rendered ) }
+								{ label }
 							</MenuItem>
 						);
 					} ) }
@@ -37,13 +40,12 @@ const ExistingMenusSelector = ( {
 			) }
 			{ showClassicMenus && hasClassicMenus && (
 				<MenuGroup label={ __( 'Classic Menus' ) }>
-					{ menus.map( ( menu ) => {
+					{ classicMenus.map( ( menu ) => {
 						return (
 							<MenuItem
 								onClick={ () => {
-									onCreateFromMenu( menu.id, menu.name );
+									onSelectClassicMenu( menu );
 								} }
-								// onClose={ onClose }
 								key={ menu.id }
 							>
 								{ decodeEntities( menu.name ) }

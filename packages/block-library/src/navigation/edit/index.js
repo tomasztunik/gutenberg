@@ -500,6 +500,9 @@ function Navigation( {
 										canUserCreateNavigation={
 											canUserCreateNavigation
 										}
+										canUserSwitchNavigation={
+											canSwitchNavigationMenu
+										}
 									/>
 								) }
 							</ToolbarDropdownMenu>
