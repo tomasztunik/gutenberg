@@ -101,9 +101,13 @@ class WP_Theme_JSON_Gutenberg {
 			'value_key'         => 'color',
 			'css_vars'          => '--wp--preset--color--$slug',
 			'classes'           => array(
-				'.has-$slug-color'            => 'color',
-				'.has-$slug-background-color' => 'background-color',
-				'.has-$slug-border-color'     => 'border-color',
+				'.has-$slug-color'               => 'color',
+				'.has-$slug-background-color'    => 'background-color',
+				'.has-$slug-border-color'        => 'border-color',
+				'.has-$slug-border-top-color'    => 'border-top-color',
+				'.has-$slug-border-right-color'  => 'border-right-color',
+				'.has-$slug-border-bottom-color' => 'border-bottom-color',
+				'.has-$slug-border-left-color'   => 'border-left-color',
 			),
 			'properties'        => array( 'color', 'background-color', 'border-color' ),
 		),
@@ -1440,7 +1444,7 @@ class WP_Theme_JSON_Gutenberg {
 		 * Additionally, for some preset types, we also want to make sure the
 		 * values they introduce don't conflict with default values. We do so
 		 * by checking the incoming slugs for theme presets and compare them
-		 * with the equivalent dfefault presets: if a slug is present as a default
+		 * with the equivalent default presets: if a slug is present as a default
 		 * we remove it from the theme presets.
 		 */
 		$nodes        = self::get_setting_nodes( $incoming_data );
@@ -1528,7 +1532,7 @@ class WP_Theme_JSON_Gutenberg {
 	}
 
 	/**
-	 * Returns whether a presets should be overriden or not.
+	 * Returns whether a presets should be overridden or not.
 	 *
 	 * @param array      $theme_json The theme.json like structure to inspect.
 	 * @param array      $path Path to inspect.
@@ -1543,8 +1547,8 @@ class WP_Theme_JSON_Gutenberg {
 		// The relationship between whether to override the defaults
 		// and whether the defaults are enabled is inverse:
 		//
-		// - If defaults are enabled  => theme presets should not be overriden
-		// - If defaults are disabled => theme presets should be overriden
+		// - If defaults are enabled  => theme presets should not be overridden
+		// - If defaults are disabled => theme presets should be overridden
 		//
 		// For example, a theme sets defaultPalette to false,
 		// making the default palette hidden from the user.
@@ -1633,7 +1637,7 @@ class WP_Theme_JSON_Gutenberg {
 	 * Removes the preset values whose slug is equal to any of given slugs.
 	 *
 	 * @param array $node The node with the presets to validate.
-	 * @param array $slugs The slugs that should not be overriden.
+	 * @param array $slugs The slugs that should not be overridden.
 	 *
 	 * @return array The new node
 	 */

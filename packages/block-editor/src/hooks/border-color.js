@@ -68,7 +68,7 @@ export function BorderColorEdit( props ) {
 
 	// Detect changes in the color attributes and update the colorValue to keep the
 	// UI in sync. This is necessary for situations when border controls interact with
-	// eachother: eg, setting the border width to zero causes the color and style
+	// each other: eg, setting the border width to zero causes the color and style
 	// selections to be cleared.
 	useEffect( () => {
 		setColorValue(
@@ -171,19 +171,33 @@ function addAttributes( settings ) {
 		return settings;
 	}
 
-	// Allow blocks to specify default value if needed.
-	if ( settings.attributes.borderColor ) {
+	// Allow blocks to specify border color values if needed.
+	const { attributes } = settings;
+
+	// Skip any adjustments if block already defines both border color
+	// attributes to set defaults etc.
+	if ( attributes.borderColor && attributes.sideBorderColors ) {
 		return settings;
 	}
 
-	// Add new borderColor attribute to block settings.
+	// If we are missing border color attribute definition, add it.
+	if ( ! attributes.borderColor ) {
+		return {
+			...settings,
+			attributes: {
+				...attributes,
+				borderColor: { type: 'string' },
+			},
+		};
+	}
+
+	// We are missing attribute for side border colors, add it to existing
+	// attribute definitions.
 	return {
 		...settings,
 		attributes: {
-			...settings.attributes,
-			borderColor: {
-				type: 'string',
-			},
+			...attributes,
+			sideBorderColors: { type: 'object', default: null },
 		},
 	};
 }
@@ -205,19 +219,51 @@ function addSaveProps( props, blockType, attributes ) {
 		return props;
 	}
 
-	const { borderColor, style } = attributes;
-	const borderColorClass = getColorClassName( 'border-color', borderColor );
-
-	const newClassName = classnames( props.className, {
-		'has-border-color': borderColor || style?.border?.color,
-		[ borderColorClass ]: !! borderColorClass,
-	} );
+	const borderClasses = getBorderClasses( attributes );
+	const newClassName = classnames( props.className, borderClasses );
 
 	// If we are clearing the last of the previous classes in `className`
 	// set it to `undefined` to avoid rendering empty DOM attributes.
 	props.className = newClassName ? newClassName : undefined;
 
 	return props;
+}
+
+export function getBorderClasses( attributes ) {
+	const { borderColor, style } = attributes;
+	const borderColorClass = getColorClassName( 'border-color', borderColor );
+
+	return classnames( {
+		'has-border-color': borderColor || style?.border?.color,
+		[ borderColorClass ]: !! borderColorClass,
+		...getSideBorderClasses( attributes ),
+	} );
+}
+
+/**
+ * Generates a collection of CSS classes for the block's current border color
+ * selections. The results are intended to be further processed via a call
+ * through `classnames()`.
+ *
+ * @param {Object} attributes Block attributes.
+ * @return {Object}           CSS classes for side border colors.
+ */
+function getSideBorderClasses( attributes ) {
+	const { sideBorderColors, style } = attributes;
+	const sides = [ 'top', 'right', 'bottom', 'left' ];
+
+	return sides.reduce( ( classes, side ) => {
+		const color = sideBorderColors?.[ side ];
+		const hasColor = color || style?.border?.[ side ]?.color;
+		const baseClassName = `border-${ side }-color`;
+		const colorClass = getColorClassName( baseClassName, color );
+
+		return {
+			...classes,
+			[ `has-${ baseClassName }` ]: hasColor,
+			[ colorClass ]: !! colorClass,
+		};
+	}, {} );
 }
 
 /**

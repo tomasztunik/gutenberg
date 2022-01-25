@@ -116,6 +116,18 @@
 html :where(.has-border-color) {
 	border-style: solid;
 }
+html :where(.has-border-top-color) {
+	border-top-style: solid;
+}
+html :where(.has-border-right-color) {
+	border-right-style: solid;
+}
+html :where(.has-border-bottom-color) {
+	border-bottom-style: solid;
+}
+html :where(.has-border-left-color) {
+	border-left-style: solid;
+}
 
 html :where([style*="border-width"]) {
 	border-style: solid;

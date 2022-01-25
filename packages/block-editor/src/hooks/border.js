@@ -6,6 +6,7 @@ import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalBorderBoxControl as BorderBoxControl,
 	isDefinedBorder,
+	hasSplitBorders,
 } from '@wordpress/components';
 import { Platform } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -26,14 +27,17 @@ import { cleanEmptyObject } from './utils';
 export const BORDER_SUPPORT_KEY = '__experimentalBorder';
 
 const hasBorderValue = ( props ) => {
-	return isDefinedBorder( props.attributes.style?.border );
+	const { borderColor, sideBorderColors, style } = props.attributes;
+	return isDefinedBorder( style?.border ) || borderColor || sideBorderColors;
 };
 
-// The border color, style, and width are omitted so the get undefined. The
+// The border color, style, and width are omitted so they get undefined. The
 // border radius is separate and must retain its selection.
 const resetBorder = ( { attributes = {}, setAttributes } ) => {
 	const { style } = attributes;
 	setAttributes( {
+		borderColor: undefined,
+		sideBorderColors: undefined,
 		style: {
 			...style,
 			border: cleanEmptyObject( {
@@ -43,9 +47,10 @@ const resetBorder = ( { attributes = {}, setAttributes } ) => {
 	} );
 };
 
-// TODO: Revisit this and check if it actually works as expected.
 const resetBorderFilter = ( newAttributes ) => ( {
 	...newAttributes,
+	borderColor: undefined,
+	sideBorderColors: undefined,
 	style: {
 		...newAttributes.style,
 		border: {
@@ -54,12 +59,90 @@ const resetBorderFilter = ( newAttributes ) => ( {
 	},
 } );
 
-export function BorderPanel( props ) {
+const getColorByProperty = ( colors, property, value ) => {
+	let matchedColor;
+
+	colors.some( ( origin ) =>
+		origin.colors.some( ( color ) => {
+			if ( color[ property ] === value ) {
+				matchedColor = color;
+				return true;
+			}
+
+			return false;
+		} )
+	);
+
+	return matchedColor;
+};
+
+export const getMultiOriginColor = ( { colors, namedColor, customColor } ) => {
+	// Search each origin (default, theme, or user) for matching color by name.
+	if ( namedColor ) {
+		const colorObject = getColorByProperty( colors, 'slug', namedColor );
+		if ( colorObject ) {
+			return colorObject;
+		}
+	}
+
+	// Skip if no custom color or matching named color.
+	if ( ! customColor ) {
+		return { color: undefined };
+	}
+
+	// Attempt to find color via custom color value or build new object.
+	const colorObject = getColorByProperty( colors, 'color', customColor );
+	return colorObject ? colorObject : { color: customColor };
+};
+
+const getBorderObject = ( attributes, colors ) => {
 	const {
-		attributes: { style },
-		clientId,
-		setAttributes,
-	} = props;
+		borderColor,
+		sideBorderColors,
+		style: { border: borderStyles },
+	} = attributes;
+
+	// If we have a named color for a flat border. Fetch that color object and
+	// apply that color's value to the color property within the style object.
+	if ( borderColor ) {
+		const { color } = getMultiOriginColor( {
+			colors,
+			namedColor: borderColor,
+		} );
+
+		return color ? { ...borderStyles, color } : borderStyles;
+	}
+
+	// If we have named colors for the individual side borders, retrieve their
+	// related color objects and apply the real color values to the split
+	// border objects.
+	if ( sideBorderColors ) {
+		const hydratedBorderStyles = { ...borderStyles };
+
+		Object.entries( sideBorderColors ).forEach(
+			( [ side, namedColor ] ) => {
+				const { color } = getMultiOriginColor( { colors, namedColor } );
+
+				if ( color ) {
+					hydratedBorderStyles[ side ] = {
+						...hydratedBorderStyles[ side ],
+						color,
+					};
+				}
+			}
+		);
+
+		return hydratedBorderStyles;
+	}
+
+	// No named colors selected all color values if any should already be in
+	// the style's border object.
+	return borderStyles;
+};
+
+export function BorderPanel( props ) {
+	const { attributes, clientId, setAttributes } = props;
+	const { style } = attributes;
 	const isDisabled = useIsBorderDisabled( props );
 	const isSupported = hasBorderSupport( props.name );
 	const { colors } = useMultipleOriginColorsAndGradients();
@@ -94,10 +177,54 @@ export function BorderPanel( props ) {
 		const borderStyles = !! style?.border?.radius
 			? { radius: style?.border?.radius, ...newBorder }
 			: newBorder;
+
+		let newBorderColor;
+		let newSideBorderColors;
+
+		if ( hasSplitBorders( borderStyles ) ) {
+			newSideBorderColors = {};
+
+			[ 'top', 'right', 'bottom', 'left' ].forEach( ( side ) => {
+				if ( borderStyles[ side ]?.color ) {
+					const colorObject = getMultiOriginColor( {
+						colors,
+						customColor: borderStyles[ side ]?.color,
+					} );
+
+					if ( colorObject.slug ) {
+						// If we have a named color, set the sides named color
+						// attribute and clear the saved style objects color value.
+						newSideBorderColors[ side ] = colorObject.slug;
+						borderStyles[ side ].color = undefined;
+					} else {
+						// If we no longer have a named color, clear the
+						// side's named color attribute.
+						newSideBorderColors[ side ] = undefined;
+					}
+				}
+			} );
+		} else if ( borderStyles?.color ) {
+			// We have a flat border configuration. Apply named color slug to
+			// `borderColor` attribute and clear color style property if found.
+			const customColor = borderStyles?.color;
+			const colorObject = getMultiOriginColor( { colors, customColor } );
+
+			if ( colorObject.slug ) {
+				newBorderColor = colorObject.slug;
+				borderStyles.color = undefined;
+			}
+		}
+
 		const newStyle = cleanEmptyObject( { ...style, border: borderStyles } );
 
-		setAttributes( { style: newStyle } );
+		setAttributes( {
+			style: newStyle,
+			borderColor: newBorderColor,
+			sideBorderColors: newSideBorderColors,
+		} );
 	};
+
+	const hydratedBorder = getBorderObject( attributes, colors );
 
 	return (
 		<InspectorControls __experimentalGroup="border">
@@ -116,7 +243,7 @@ export function BorderPanel( props ) {
 						showColor={ isColorSupported }
 						showStyle={ isStyleSupported }
 						showWidth={ isWidthSupported }
-						value={ style?.border }
+						value={ hydratedBorder }
 						__experimentalHasMultipleOrigins={ true }
 						__experimentalIsRenderedInSidebar={ true }
 					/>
